@@ -6,5 +6,4 @@ RUN git clone https://github.com/zachs18/zerotrust.git
 WORKDIR /zerotrust
 RUN git checkout demo-v1
 WORKDIR /zerotrust/drone
-RUN wget https://wangso-flynet.s3.amazonaws.com/road-traffic.mp4
 ENTRYPOINT ["python3", "drone.py"]
