@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ground
+  labels:
+    app: ground
+spec:
+  nodeName: groundstation
+  containers:
+  - name: ground
+    image: zachs18/zerotrust-demo:ground-v2
+    ports:
+      - containerPort: 8080
+    env:
+    - name: server
+      value: "172.31.93.33:5000"
+    command:
+      - sleep
+      - "3600000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone1
+  labels:
+    app: drone1
+    mission: sense
+spec:
+  nodeName: drone1
+  containers:
+  - name: drone1
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "172.31.93.33:5000"
+    command:
+      - sleep
+      - "3600000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone2
+  labels:
+    app: drone2
+    mission: sense
+spec:
+  nodeName: drone2
+  containers:
+  - name: drone2
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "172.31.93.33:5000"
+    command:
+      - sleep
+      - "3600000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone3
+  labels:
+    app: drone3
+    mission: observe
+spec:
+  nodeName: drone3
+  containers:
+  - name: drone3
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "172.31.93.33:5000"
+    command:
+      - sleep
+      - "3600000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone4
+  labels:
+    app: drone4
+    mission: observe
+spec:
+  nodeName: drone4
+  containers:
+  - name: drone4
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "172.31.93.33:5000"
+    command:
+      - sleep
+      - "3600000"
