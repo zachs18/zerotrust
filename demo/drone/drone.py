@@ -40,7 +40,7 @@ while True:
 	currentFPS = 1.0/(time.time() - frameStartTime)
 	FPS.append(currentFPS)
 	print("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))
-	file2 = open("../output/client/result.txt", "a")
+	file2 = open("./output/result.txt", "a")
 	file2.write("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))
 	file2.close
 	if r == "<Response [500]>":

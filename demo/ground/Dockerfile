@@ -11,4 +11,5 @@ RUN cp /yolo-object-detection/yolo-coco/yolov3.weights ./YOLO/
 RUN cp /yolo-object-detection/yolo-coco/yolov3.cfg ./YOLO/
 RUN cp /yolo-object-detection/yolo-coco/coco.names ./YOLO/
 RUN rm -r /yolo-object-detection/ /yolo_weights.zip
+RUN mkdir output
 ENTRYPOINT ["python3", "ground.py"]

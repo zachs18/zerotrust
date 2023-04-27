@@ -54,7 +54,7 @@ def init():
 		labelDict[label] = 0
 	json.dump(labelDict, open(outputFile, "w"))
 	print("Output Counter Initialized \n")
-	f = open("../output/server/boundingBox.txt", "w")
+	f = open(boundingBoxFile, "w")
 	f.close()
 	print("bounding box file reset \n")
 	return("server initialized \n")
