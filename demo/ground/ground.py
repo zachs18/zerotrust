@@ -203,7 +203,7 @@ def setNextServer():
 	#text_file=open("../NextServer.txt", "w")
 	#text_file.write(data["server"])
 	#text_file.close()
-	nonlocal server
+	global server
 	server = data['server']
 	return ("server address updated... at " + data["server"] + "\n")
 
