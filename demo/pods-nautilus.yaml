@@ -1,0 +1,155 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ground
+  labels:
+    app: ground
+    tier: server
+spec:
+  setHostnameAsFQDN: true
+#  nodeName: groundstation
+  hostname: ground
+  subdomain: zerotrust
+  containers:
+  - name: ground
+    image: zachs18/zerotrust-demo:ground-v2
+    ports:
+      - containerPort: 8080
+    env:
+    - name: server
+      value: "ground.zerotrust.gpn-mizzou-scully.svc.cluster.local:5000"
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+#      value: "172.31.93.33:5000"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+#    command:
+#      - sleep
+#      - "3600000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone1
+  labels:
+    app: drone1
+    mission: sense
+spec:
+  setHostnameAsFQDN: true
+  hostname: drone1
+  subdomain: zerotrust
+#  nodeName: drone1
+  containers:
+  - name: drone1
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "ground.zerotrust.gpn-mizzou-scully.svc.cluster.local:5000"
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+#      value: "172.31.93.33:5000"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    command:
+      - sh
+      - "-c"
+      - "echo sleeping && sleep 3600000"
+---
+
+
+
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: zerotrust-subdomain
+#spec:
+##  type: ClusterIP
+#  selector:
+#    name: ground
+##    app: ground
+##    tier: server
+#  ports:
+#  - name: http
+#    port: 5000
+#    targetPort: 5000
+##    protocol: TCP
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  annotations:
+#    kubernetes.io/ingress.class: haproxy
+#  name: ground-ingress
+#spec:
+#  rules:
+#  - host: zasbdy-zerotrust.nrp-nautilus.io
+#    http:
+#      paths:
+#      - path: /
+#        pathType: Prefix
+#        backend:
+#          service:
+#            name: ground-service
+#            port:
+#              number: 5000
+
+
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: drone2
+#  labels:
+#    app: drone2
+#    mission: sense
+#spec:
+#  nodeName: drone2
+#  containers:
+#  - name: drone2
+#    image: zachs18/zerotrust-demo:drone-v1
+#    env:
+#    - name: server
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+##      value: "172.31.93.33:5000"
+#    command:
+#      - sleep
+#      - "3600000"
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: drone3
+#  labels:
+#    app: drone3
+#    mission: observe
+#spec:
+#  nodeName: drone3
+#  containers:
+#  - name: drone3
+#    image: zachs18/zerotrust-demo:drone-v1
+#    env:
+#    - name: server
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+##      value: "172.31.93.33:5000"
+#    command:
+#      - sleep
+#      - "3600000"
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: drone4
+#  labels:
+#    app: drone4
+#    mission: observe
+#spec:
+#  nodeName: drone4
+#  containers:
+#  - name: drone4
+#    image: zachs18/zerotrust-demo:drone-v1
+#    env:
+#    - name: server
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+##      value: "172.31.93.33:5000"
+#    command:
+#      - sleep
+#      - "3600000"
