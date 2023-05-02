@@ -1,3 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  name: ground-ingress
+spec:
+  rules:
+  - host: zasbdy-zerotrust-test.nrp-nautilus.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: ground-test
+            port:
+              number: 5001
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - zasbdy-zerotrust-test.nrp-nautilus.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ground-test
+spec:
+  selector:
+    app.kubernetes.io/name: ground
+  ports:
+#    - name: testing
+#      protocol: TCP
+#      port: 8080
+#      targetPort: 8080
+    - protocol: TCP
+      name: test-port
+      port: 5001
+      targetPort: 5001
+---
 apiVersion: v1
 kind: Service
 metadata:
