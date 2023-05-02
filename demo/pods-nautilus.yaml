@@ -89,3 +89,135 @@ spec:
 #      - sh
 #      - "-c"
 #      - "echo sleeping && sleep 3600000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone2-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone2
+  ports:
+#    - name: testing
+#      protocol: TCP
+#      port: 8080
+#      targetPort: 8080
+    - protocol: TCP
+#      name: real
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone2
+  labels:
+    app: drone2
+    mission: sense
+spec:
+  # setHostnameAsFQDN: true
+  # hostname: drone2
+  # subdomain: zerotrust
+#  nodeName: drone2
+  containers:
+  - name: drone2
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+#      value: "172.31.93.33:5000"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+#    command:
+#      - sh
+#      - "-c"
+#      - "echo sleeping && sleep 3600000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone3-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone3
+  ports:
+#    - name: testing
+#      protocol: TCP
+#      port: 8080
+#      targetPort: 8080
+    - protocol: TCP
+#      name: real
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone3
+  labels:
+    app: drone3
+    mission: sense
+spec:
+  # setHostnameAsFQDN: true
+  # hostname: drone3
+  # subdomain: zerotrust
+#  nodeName: drone3
+  containers:
+  - name: drone3
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+#      value: "172.31.93.33:5000"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+#    command:
+#      - sh
+#      - "-c"
+#      - "echo sleeping && sleep 3600000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone4-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone4
+  ports:
+#    - name: testing
+#      protocol: TCP
+#      port: 8080
+#      targetPort: 8080
+    - protocol: TCP
+#      name: real
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drone4
+  labels:
+    app: drone4
+    mission: sense
+spec:
+  # setHostnameAsFQDN: true
+  # hostname: drone4
+  # subdomain: zerotrust
+#  nodeName: drone4
+  containers:
+  - name: drone4
+    image: zachs18/zerotrust-demo:drone-v1
+    env:
+    - name: server
+      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
+#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
+#      value: "172.31.93.33:5000"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+#    command:
+#      - sh
+#      - "-c"
+#      - "echo sleeping && sleep 3600000"
