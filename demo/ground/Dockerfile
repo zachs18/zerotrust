@@ -1,4 +1,6 @@
 FROM wangso/python3-opencv-ffmpeg:V1
+RUN apt-get update && apt-get -y install python3-pip
+RUN pip3 install prometheus-client
 RUN wget https://mizzouceri-s3.s3.amazonaws.com/yolo_weights.zip
 RUN unzip yolo_weights.zip
 ADD https://api.github.com/repos/zachs18/zerotrust/git/refs/heads/demo-v1 version.json

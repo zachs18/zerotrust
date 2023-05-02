@@ -99,14 +99,62 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: drone1-svc
+  name: ground-prometheus-svc
+spec:
+  selector:
+    app.kubernetes.io/name: ground
+  ports:
+    - protocol: TCP
+      port: 5090
+      targetPort: 5090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone1-prometheus-svc
 spec:
   selector:
     app.kubernetes.io/name: drone1
   ports:
     - protocol: TCP
-      port: 5000
-      targetPort: 5000
+      port: 5090
+      targetPort: 5090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone2-prometheus-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone2
+  ports:
+    - protocol: TCP
+      port: 5090
+      targetPort: 5090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone3-prometheus-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone3
+  ports:
+    - protocol: TCP
+      port: 5090
+      targetPort: 5090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone4-prometheus-svc
+spec:
+  selector:
+    app.kubernetes.io/name: drone4
+  ports:
+    - protocol: TCP
+      port: 5090
+      targetPort: 5090
 ---
 apiVersion: v1
 kind: Pod
@@ -132,18 +180,6 @@ spec:
 #      - "echo sleeping && sleep 3600000"
 ---
 apiVersion: v1
-kind: Service
-metadata:
-  name: drone2-svc
-spec:
-  selector:
-    app.kubernetes.io/name: drone2
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
----
-apiVersion: v1
 kind: Pod
 metadata:
   name: drone2
@@ -167,18 +203,6 @@ spec:
 #      - "echo sleeping && sleep 3600000"
 ---
 apiVersion: v1
-kind: Service
-metadata:
-  name: drone3-svc
-spec:
-  selector:
-    app.kubernetes.io/name: drone3
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
----
-apiVersion: v1
 kind: Pod
 metadata:
   name: drone3
@@ -200,18 +224,6 @@ spec:
 #      - sh
 #      - "-c"
 #      - "echo sleeping && sleep 3600000"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: drone4-svc
-spec:
-  selector:
-    app.kubernetes.io/name: drone4
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
 ---
 apiVersion: v1
 kind: Pod

@@ -1,10 +1,15 @@
 # adapted from https://github.com/MizzouCERI-research/ImageProcessingWebServices
+# and https://github.com/prometheus/client_python
 import requests
 import math
 import cv2
 import numpy as np
 import time
 import os
+from prometheus_client import start_http_server, Counter
+
+frames_sent = Counter('frames_sent', "Frames sent to ground station by this drone")
+start_http_server(5090)
 
 frameCount = 1
 peakFPS = 0
@@ -37,6 +42,7 @@ while True:
 	#print(frame.shape)
 	data = {"Frame":frame.tolist()}
 	r = requests.post(uri, json = data)
+	frames_sent.inc()
 	currentFPS = 1.0/(time.time() - frameStartTime)
 	FPS.append(currentFPS)
 	print("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))

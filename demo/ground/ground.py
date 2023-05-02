@@ -9,6 +9,10 @@ import numpy as np
 #import time
 import json
 from collections import OrderedDict
+from prometheus_client import start_http_server, Counter
+
+start_http_server(5090)
+frames_received = Counter("frames_received", "Frames received by the ground station")
 
 #global variables
 width = 0
@@ -67,6 +71,9 @@ def frameProcessing():
 	"""
 	global referenceFrame
 	global dilatedFrame
+
+	frames_received.inc()
+
 	#receive the image from the request.
 	file = request.json
 	frame = np.array(file["Frame"], dtype = "uint8")
