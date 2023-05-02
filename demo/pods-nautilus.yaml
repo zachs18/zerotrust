@@ -3,39 +3,34 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: haproxy
-  name: ground-ingress
+  name: prometheus-ingress
 spec:
   rules:
-  - host: zasbdy-zerotrust-test.nrp-nautilus.io
+  - host: zerotrust-prometheus-zasbdy.nrp-nautilus.io
     http:
       paths:
       - backend:
           service:
-            name: ground-test
+            name: prometheus-svc
             port:
-              number: 5001
+              number: 9090
         path: /
-        pathType: ImplementationSpecific
+        pathType: Prefix
   tls:
   - hosts:
-    - zasbdy-zerotrust-test.nrp-nautilus.io
+    - zerotrust-prometheus-zasbdy.nrp-nautilus.io
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ground-test
+  name: prometheus-svc
 spec:
   selector:
-    app.kubernetes.io/name: ground
+    app.kubernetes.io/name: prometheus
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-      name: test-port
-      port: 5001
-      targetPort: 5001
+      port: 9090
+      targetPort: 9090
 ---
 apiVersion: v1
 kind: Service
@@ -45,14 +40,35 @@ spec:
   selector:
     app.kubernetes.io/name: ground
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-#      name: real
       port: 5000
       targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prometheus
+  labels:
+    app.kubernetes.io/name: prometheus
+    app: prometheus
+    tier: server
+spec:
+  containers:
+  - name: prometheus
+    image: zachs18/zerotrust-demo:prometheus-v1
+    ports:
+      - containerPort: 5000
+    env:
+    - name: server
+      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+#    command:
+#      - sh
+#      - "-c"
+#      - "echo sleeping && sleep 3600000"
 ---
 apiVersion: v1
 kind: Pod
@@ -63,21 +79,16 @@ metadata:
     app: ground
     tier: server
 spec:
-#   setHostnameAsFQDN: true
-# #  nodeName: groundstation
-#   hostname: ground
-#   subdomain: zerotrust
   containers:
   - name: ground
     image: zachs18/zerotrust-demo:ground-v2
     ports:
-#      - containerPort: 8080
       - containerPort: 5000
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
-#      value: "172.31.93.33:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -93,12 +104,7 @@ spec:
   selector:
     app.kubernetes.io/name: drone1
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-#      name: real
       port: 5000
       targetPort: 5000
 ---
@@ -110,18 +116,14 @@ metadata:
     app: drone1
     mission: sense
 spec:
-  # setHostnameAsFQDN: true
-  # hostname: drone1
-  # subdomain: zerotrust
-#  nodeName: drone1
   containers:
   - name: drone1
     image: zachs18/zerotrust-demo:drone-v1
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
-#      value: "172.31.93.33:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -137,12 +139,7 @@ spec:
   selector:
     app.kubernetes.io/name: drone2
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-#      name: real
       port: 5000
       targetPort: 5000
 ---
@@ -154,18 +151,14 @@ metadata:
     app: drone2
     mission: sense
 spec:
-  # setHostnameAsFQDN: true
-  # hostname: drone2
-  # subdomain: zerotrust
-#  nodeName: drone2
   containers:
   - name: drone2
     image: zachs18/zerotrust-demo:drone-v1
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
-#      value: "172.31.93.33:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -181,12 +174,7 @@ spec:
   selector:
     app.kubernetes.io/name: drone3
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-#      name: real
       port: 5000
       targetPort: 5000
 ---
@@ -198,18 +186,14 @@ metadata:
     app: drone3
     mission: sense
 spec:
-  # setHostnameAsFQDN: true
-  # hostname: drone3
-  # subdomain: zerotrust
-#  nodeName: drone3
   containers:
   - name: drone3
     image: zachs18/zerotrust-demo:drone-v1
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
-#      value: "172.31.93.33:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -225,12 +209,7 @@ spec:
   selector:
     app.kubernetes.io/name: drone4
   ports:
-#    - name: testing
-#      protocol: TCP
-#      port: 8080
-#      targetPort: 8080
     - protocol: TCP
-#      name: real
       port: 5000
       targetPort: 5000
 ---
@@ -242,18 +221,14 @@ metadata:
     app: drone4
     mission: sense
 spec:
-  # setHostnameAsFQDN: true
-  # hostname: drone4
-  # subdomain: zerotrust
-#  nodeName: drone4
   containers:
   - name: drone4
     image: zachs18/zerotrust-demo:drone-v1
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-#      value: "zasbdy-zerotrust.nrp-nautilus.io:5000"
-#      value: "172.31.93.33:5000"
+    - name: prometheus
+      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
