@@ -27,10 +27,10 @@ scrape_configs:
 
       static_configs:
           - targets: ["localhost:9090",
-              "ground-prometheus-svc..gpn-mizzou-scully.svc.cluster.local:5090",
-              "drone1-prometheus-svc..gpn-mizzou-scully.svc.cluster.local:5090",
-              "drone2-prometheus-svc..gpn-mizzou-scully.svc.cluster.local:5090",
-              "drone3-prometheus-svc..gpn-mizzou-scully.svc.cluster.local:5090",
-              "drone4-prometheus-svc..gpn-mizzou-scully.svc.cluster.local:5090",
+              "ground-prometheus-svc.gpn-mizzou-scully.svc.cluster.local:5090",
+              "drone1-prometheus-svc.gpn-mizzou-scully.svc.cluster.local:5090",
+              "drone2-prometheus-svc.gpn-mizzou-scully.svc.cluster.local:5090",
+              "drone3-prometheus-svc.gpn-mizzou-scully.svc.cluster.local:5090",
+              "drone4-prometheus-svc.gpn-mizzou-scully.svc.cluster.local:5090",
             ]
 
