@@ -9,11 +9,13 @@ import numpy as np
 #import time
 import json
 from collections import OrderedDict
-from prometheus_client import CollectorRegistry, Counter, push_to_gateway
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway, Histogram
+from datetime import datetime
 
 # Prometheus
 registry = CollectorRegistry()
-frames_received = Counter("frames_received", "Frames received by the ground station")
+frames_received = Counter("frames_received", "Frames received by the ground station", registry=registry)
+frame_processing_time_ms = Histogram("frame_processing_time_ms", "Average frame processing time", registry=registry)
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = "ground"
@@ -77,7 +79,7 @@ def frameProcessing():
 	global dilatedFrame
 
 	frames_received.inc()
-	push_to_gateway(prometheus_push, job=job, registry=registry)
+	start_time = datetime.now()
 
 	#receive the image from the request.
 	file = request.json
@@ -107,6 +109,12 @@ def frameProcessing():
 	coordYExitLine = int((height / 2)+offsetExitLine)
 	headers = {"enctype" : "multipart/form-data"}
 	r = requests.post("http://" + getNextServer() + "/objectClassifier", headers = headers, json = {"Frame":frame.tolist()} )
+
+	end_time = datetime.now()
+	frame_processing_time = end_time - start_time
+	frame_processing_time_ms.observe(frame_processing_duration.total_seconds() * 1000)
+	push_to_gateway(prometheus_push, job=job, registry=registry)
+
 	return Response(status=200)
 
 @app.route("/objectClassifier", methods = ["POST"])
