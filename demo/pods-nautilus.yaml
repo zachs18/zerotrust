@@ -56,6 +56,7 @@ spec:
   containers:
   - name: prometheus
     image: zachs18/zerotrust-demo:prometheus-v1
+    imagePullPolicy: Always
     ports:
       - containerPort: 5000
     env:
@@ -82,6 +83,7 @@ spec:
   containers:
   - name: ground
     image: zachs18/zerotrust-demo:ground-v2
+    imagePullPolicy: Always
     ports:
       - containerPort: 5000
     env:
@@ -168,6 +170,7 @@ spec:
   containers:
   - name: drone1
     image: zachs18/zerotrust-demo:drone-v1
+    imagePullPolicy: Always
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
@@ -192,6 +195,7 @@ spec:
   containers:
   - name: drone2
     image: zachs18/zerotrust-demo:drone-v1
+    imagePullPolicy: Always
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
@@ -216,6 +220,7 @@ spec:
   containers:
   - name: drone3
     image: zachs18/zerotrust-demo:drone-v1
+    imagePullPolicy: Always
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
@@ -240,6 +245,7 @@ spec:
   containers:
   - name: drone4
     image: zachs18/zerotrust-demo:drone-v1
+    imagePullPolicy: Always
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
