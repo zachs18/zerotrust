@@ -112,7 +112,7 @@ def frameProcessing():
 
 	end_time = datetime.now()
 	frame_processing_time = end_time - start_time
-	frame_processing_time_ms.observe(frame_processing_duration.total_seconds() * 1000)
+	frame_processing_time_ms.observe(frame_processing_time.total_seconds() * 1000)
 	push_to_gateway(prometheus_push, job=job, registry=registry)
 
 	return Response(status=200)
