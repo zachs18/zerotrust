@@ -161,6 +161,7 @@ kind: Pod
 metadata:
   name: drone1
   labels:
+    app.kubernetes.io/name: drone1
     app: drone1
     mission: sense
 spec:
@@ -184,6 +185,7 @@ kind: Pod
 metadata:
   name: drone2
   labels:
+    app.kubernetes.io/name: drone2
     app: drone2
     mission: sense
 spec:
@@ -207,6 +209,7 @@ kind: Pod
 metadata:
   name: drone3
   labels:
+    app.kubernetes.io/name: drone3
     app: drone3
     mission: sense
 spec:
@@ -230,6 +233,7 @@ kind: Pod
 metadata:
   name: drone4
   labels:
+    app.kubernetes.io/name: drone4
     app: drone4
     mission: sense
 spec:
