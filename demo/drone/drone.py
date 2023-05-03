@@ -6,10 +6,14 @@ import cv2
 import numpy as np
 import time
 import os
-from prometheus_client import start_http_server, Counter
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway
+import socket
 
-frames_sent = Counter('frames_sent', "Frames sent to ground station by this drone")
-start_http_server(5090)
+registry = CollectorRegistry()
+frames_sent = Counter('frames_sent', "Frames sent to ground station by this drone", registry=registry)
+#start_http_server(5090)
+prometheus_push = os.environ["prometheus_push"]
+job = socket.gethostname() or "drone"
 
 frameCount = 1
 peakFPS = 0
@@ -43,6 +47,7 @@ while True:
 	data = {"Frame":frame.tolist()}
 	r = requests.post(uri, json = data)
 	frames_sent.inc()
+	push_to_gateway(prometheus_push, job=job, registry=registry)
 	currentFPS = 1.0/(time.time() - frameStartTime)
 	FPS.append(currentFPS)
 	print("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))

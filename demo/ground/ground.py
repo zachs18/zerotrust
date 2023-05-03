@@ -9,10 +9,14 @@ import numpy as np
 #import time
 import json
 from collections import OrderedDict
-from prometheus_client import start_http_server, Counter
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway
 
-#start_http_server(5090)
+# Prometheus
+registry = CollectorRegistry()
 frames_received = Counter("frames_received", "Frames received by the ground station")
+#start_http_server(5090)
+prometheus_push = os.environ["prometheus_push"]
+job = "ground"
 
 #global variables
 width = 0
@@ -73,6 +77,7 @@ def frameProcessing():
 	global dilatedFrame
 
 	frames_received.inc()
+	push_to_gateway(prometheus_push, job=job, registry=registry)
 
 	#receive the image from the request.
 	file = request.json

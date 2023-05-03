@@ -1,37 +1,37 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: haproxy
-  name: prometheus-ingress
-spec:
-  rules:
-  - host: zerotrust-prometheus-zasbdy.nrp-nautilus.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: prometheus-svc
-            port:
-              number: 9090
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - zerotrust-prometheus-zasbdy.nrp-nautilus.io
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: prometheus-svc
-spec:
-  selector:
-    app.kubernetes.io/name: prometheus
-  ports:
-    - protocol: TCP
-      port: 9090
-      targetPort: 9090
----
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  annotations:
+#    kubernetes.io/ingress.class: haproxy
+#  name: prometheus-ingress
+#spec:
+#  rules:
+#  - host: zerotrust-prometheus-zasbdy.nrp-nautilus.io
+#    http:
+#      paths:
+#      - backend:
+#          service:
+#            name: prometheus-svc
+#            port:
+#              number: 9090
+#        path: /
+#        pathType: Prefix
+#  tls:
+#  - hosts:
+#    - zerotrust-prometheus-zasbdy.nrp-nautilus.io
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: prometheus-svc
+#spec:
+#  selector:
+#    app.kubernetes.io/name: prometheus
+#  ports:
+#    - protocol: TCP
+#      port: 9090
+#      targetPort: 9090
+#---
 apiVersion: v1
 kind: Service
 metadata:
@@ -43,33 +43,35 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: prometheus
-  labels:
-    app.kubernetes.io/name: prometheus
-    app: prometheus
-    tier: server
-spec:
-  containers:
-  - name: prometheus
-    image: zachs18/zerotrust-demo:prometheus-v1
-    imagePullPolicy: Always
-    ports:
-      - containerPort: 5000
-    env:
-    - name: server
-      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
-    - name: PYTHONUNBUFFERED
-      value: "1"
-#    command:
-#      - sh
-#      - "-c"
-#      - "echo sleeping && sleep 3600000"
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: prometheus
+#  labels:
+#    app.kubernetes.io/name: prometheus
+#    app: prometheus
+#    tier: server
+#spec:
+#  containers:
+#  - name: prometheus
+#    image: zachs18/zerotrust-demo:prometheus-v1
+#    imagePullPolicy: Always
+#    ports:
+#      - containerPort: 5000
+#    env:
+#    - name: server
+#      value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
+##    - name: prometheus
+##      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus_push
+#      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
+#    - name: PYTHONUNBUFFERED
+#      value: "1"
+##    command:
+##      - sh
+##      - "-c"
+##      - "echo sleeping && sleep 3600000"
 ---
 apiVersion: v1
 kind: Pod
@@ -89,8 +91,10 @@ spec:
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus
+#      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: prometheus_push
+      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -174,8 +178,10 @@ spec:
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus
+#      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: prometheus_push
+      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -199,8 +205,10 @@ spec:
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus
+#      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: prometheus_push
+      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -224,8 +232,10 @@ spec:
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus
+#      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: prometheus_push
+      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
@@ -249,8 +259,10 @@ spec:
     env:
     - name: server
       value: "ground-svc.gpn-mizzou-scully.svc.cluster.local:5000"
-    - name: prometheus
-      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+#    - name: prometheus
+#      value: "prometheus-svc.gpn-mizzou-scully.svc.cluster.local:9090"
+    - name: prometheus_push
+      value: "prometheus-prometheus-pushgateway.gpn-mizzou-scully.svc.cluster.local:9091"
     - name: PYTHONUNBUFFERED
       value: "1"
 #    command:
