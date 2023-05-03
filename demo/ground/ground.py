@@ -288,8 +288,9 @@ def dilateImage(frame, interations=2 ):
 	return cv2.dilate(frame, None, iterations=2)
 
 if __name__ == "__main__":
-	print("app.debug =", app.debug, "env(WERKZEUG_RUN_MAIN) =", os.environ.get("WERKZEUG_RUN_MAIN"))
-	if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+#	print("app.debug =", app.debug, "env(WERKZEUG_RUN_MAIN) =", os.environ.get("WERKZEUG_RUN_MAIN"))
+#	if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 		# The app is not in debug mode or we are in the reloaded process. See https://stackoverflow.com/questions/9449101/how-to-stop-flask-from-initialising-twice-in-debug-mode
-		start_http_server(5090)
-	app.run(host="0.0.0.0", debug=True)
+#		print("starting prometheus client server")
+	start_http_server(5090)
+	app.run(host="0.0.0.0", debug=True, use_reloader=False)
