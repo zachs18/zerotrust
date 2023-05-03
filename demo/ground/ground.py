@@ -15,7 +15,7 @@ from datetime import datetime
 # Prometheus
 registry = CollectorRegistry()
 frames_received = Counter("frames_received", "Frames received by the ground station", registry=registry)
-frame_processing_time_ms = Histogram("frame_processing_time_ms", "Average frame processing time", registry=registry)
+frame_processing_time = Histogram("frame_processing_time", "Average frame processing time (in seconds)", registry=registry)
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = "ground"
@@ -112,7 +112,7 @@ def frameProcessing():
 
 	end_time = datetime.now()
 	frame_processing_time = end_time - start_time
-	frame_processing_time_ms.observe(frame_processing_time.total_seconds() * 1000)
+	frame_processing_time.observe(frame_processing_time.total_seconds())
 	push_to_gateway(prometheus_push, job=job, registry=registry)
 
 	return Response(status=200)
