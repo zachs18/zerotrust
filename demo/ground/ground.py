@@ -14,8 +14,8 @@ from datetime import datetime
 
 # Prometheus
 registry = CollectorRegistry()
-frames_received = Counter("frames_received", "Frames received by the ground station", registry=registry)
-frame_processing_time = Histogram("frame_processing_time", "Average frame processing time (in seconds)", registry=registry)
+frames_received_counter = Counter("frames_received", "Frames received by the ground station", registry=registry)
+frame_processing_time_histogram = Histogram("frame_processing_time", "Average frame processing time (in seconds)", registry=registry)
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = "ground"
@@ -78,7 +78,7 @@ def frameProcessing():
 	global referenceFrame
 	global dilatedFrame
 
-	frames_received.inc()
+	frames_received_counter.inc()
 	start_time = datetime.now()
 
 	#receive the image from the request.
@@ -112,7 +112,7 @@ def frameProcessing():
 
 	end_time = datetime.now()
 	frame_processing_time = end_time - start_time
-	frame_processing_time.observe(frame_processing_time.total_seconds())
+	frame_processing_time_histogram.observe(frame_processing_time.total_seconds())
 	push_to_gateway(prometheus_push, job=job, registry=registry)
 
 	return Response(status=200)
