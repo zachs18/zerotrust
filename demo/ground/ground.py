@@ -11,7 +11,7 @@ import json
 from collections import OrderedDict
 from prometheus_client import start_http_server, Counter
 
-start_http_server(5090)
+#start_http_server(5090)
 frames_received = Counter("frames_received", "Frames received by the ground station")
 
 #global variables
@@ -289,3 +289,6 @@ def dilateImage(frame, interations=2 ):
 
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", debug=True)
+	if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+		# The app is not in debug mode or we are in the reloaded process. See https://stackoverflow.com/questions/9449101/how-to-stop-flask-from-initialising-twice-in-debug-mode
+		start_http_server(5090)
