@@ -6,11 +6,11 @@ import cv2
 import numpy as np
 import time
 import os
-from prometheus_client import CollectorRegistry, Counter, push_to_gateway
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway, REGISTRY, Histogram
 import socket
 
-registry = CollectorRegistry()
-frames_sent = Counter('frames_sent', "Frames sent to ground station by this drone", registry=registry)
+frames_sent = Counter('frames_sent', "Frames sent to ground station by this drone")
+response_time = Histogram('response_time', "Frame send and response time (in seconds)")
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = socket.gethostname() or "drone"
@@ -45,15 +45,16 @@ while True:
 	#cv2.imwrite("Frame.jpg", frame)
 	#print(frame.shape)
 	data = {"Frame":frame.tolist()}
-	r = requests.post(uri, json = data)
+	with response_time.time():
+		r = requests.post(uri, json = data)
 	frames_sent.inc()
-	push_to_gateway(prometheus_push, job=job, registry=registry)
 	currentFPS = 1.0/(time.time() - frameStartTime)
 	FPS.append(currentFPS)
 	print("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))
 	file2 = open("./output/result.txt", "a")
 	file2.write("response = {}, frame = {}, fps = {} ".format(r, frameCount, round(currentFPS, 3)))
 	file2.close
+	push_to_gateway(prometheus_push, job=job, registry=REGISTRY)
 	if r == "<Response [500]>":
 		break
 print("Average FPS = {}".format(round(np.mean(FPS), 3)))

@@ -9,13 +9,12 @@ import numpy as np
 #import time
 import json
 from collections import OrderedDict
-from prometheus_client import CollectorRegistry, Counter, push_to_gateway, Histogram
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway, Histogram, REGISTRY
 from datetime import datetime
 
 # Prometheus
-registry = CollectorRegistry()
-frames_received_counter = Counter("frames_received", "Frames received by the ground station", registry=registry)
-frame_processing_time_histogram = Histogram("frame_processing_time", "Average frame processing time (in seconds)", registry=registry)
+frames_received_counter = Counter("frames_received", "Frames received by the ground station")
+frame_processing_time_histogram = Histogram("frame_processing_time", "Average frame processing time (in seconds)")
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = "ground"
@@ -79,41 +78,37 @@ def frameProcessing():
 	global dilatedFrame
 
 	frames_received_counter.inc()
-	start_time = datetime.now()
+	with frame_processing_time.time():
+		#receive the image from the request.
+		file = request.json
+		frame = np.array(file["Frame"], dtype = "uint8")
 
-	#receive the image from the request.
-	file = request.json
-	frame = np.array(file["Frame"], dtype = "uint8")
+		#gray-scale conversion and Gaussian blur filter applying
+		grayFrame = greyScaleConversion(frame)
+		blurredFrame = gaussianBlurring(grayFrame)
 
-	#gray-scale conversion and Gaussian blur filter applying
-	grayFrame = greyScaleConversion(frame)
-	blurredFrame = gaussianBlurring(grayFrame)
+		#Check if a frame has been previously processed and set it as the previous frame.
+		if type(referenceFrame) ==int():
+			referenceFrame = blurredFrame
 
-	#Check if a frame has been previously processed and set it as the previous frame.
-	if type(referenceFrame) ==int():
+		#Background subtraction and image binarization
+		frameDelta = getImageDiff(referenceFrame, blurredFrame)
 		referenceFrame = blurredFrame
+		#cv2.imwrite("previousImage.jpg", blurredFrame)
+		frameThresh = thresholdImage(frameDelta, binarizationThreshold)
 
-	#Background subtraction and image binarization
-	frameDelta = getImageDiff(referenceFrame, blurredFrame)
-	referenceFrame = blurredFrame
-	#cv2.imwrite("previousImage.jpg", blurredFrame)
-	frameThresh = thresholdImage(frameDelta, binarizationThreshold)
+		#Dilate image and find all the contours
+		dilatedFrame = dilateImage(frameThresh)
+		#cv2.imwrite("dilatedFrame.jpg", dilatedFrame)
+		cnts = getContours(dilatedFrame.copy())
 
-	#Dilate image and find all the contours
-	dilatedFrame = dilateImage(frameThresh)
-	#cv2.imwrite("dilatedFrame.jpg", dilatedFrame)
-	cnts = getContours(dilatedFrame.copy())
+		height = np.size(frame,0)
+		coordYEntranceLine = int((height / 2)-offsetEntranceLine)
+		coordYExitLine = int((height / 2)+offsetExitLine)
+		headers = {"enctype" : "multipart/form-data"}
+		r = requests.post("http://" + getNextServer() + "/objectClassifier", headers = headers, json = {"Frame":frame.tolist()} )
 
-	height = np.size(frame,0)
-	coordYEntranceLine = int((height / 2)-offsetEntranceLine)
-	coordYExitLine = int((height / 2)+offsetExitLine)
-	headers = {"enctype" : "multipart/form-data"}
-	r = requests.post("http://" + getNextServer() + "/objectClassifier", headers = headers, json = {"Frame":frame.tolist()} )
-
-	end_time = datetime.now()
-	frame_processing_time = end_time - start_time
-	frame_processing_time_histogram.observe(frame_processing_time.total_seconds())
-	push_to_gateway(prometheus_push, job=job, registry=registry)
+	push_to_gateway(prometheus_push, job=job, registry=REGISTRY)
 
 	return Response(status=200)
 
