@@ -14,7 +14,7 @@ from datetime import datetime
 
 # Prometheus
 frames_received_counter = Counter("frames_received", "Frames received by the ground station")
-frame_processing_time_histogram = Histogram("frame_processing_time", "Average frame processing time (in seconds)")
+frame_processing_time = Histogram("frame_processing_time", "Average frame processing time (in seconds)")
 #start_http_server(5090)
 prometheus_push = os.environ["prometheus_push"]
 job = "ground"
